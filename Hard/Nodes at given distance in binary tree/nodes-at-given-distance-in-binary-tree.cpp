@@ -98,12 +98,14 @@ struct Node
 class Solution
 {
 private:
-    void mark_parents(Node* root, unordered_map<Node*, Node*>& parent_track) {
+    Node* mark_parents(Node* root, unordered_map<Node*, Node*>& parent_track, int target) {
         queue<Node*> q;
         q.push(root);
+        Node* goal;
         while (!q.empty()) {
             Node* current = q.front();
             q.pop();
+            if(current->data == target) goal = current;
             if (current->left) {
                 parent_track[current->left] = current;
                 q.push(current->left);
@@ -113,23 +115,8 @@ private:
                 q.push(current->right);
             }
         }
+        return goal;
     }
-Node* find_target(int target, Node* root) {
-    if (root == nullptr) {
-        return nullptr;
-    }
-    if (root->data == target) {
-        return root;
-    }
-    
-    Node* left_result = find_target(target, root->left);
-    if (left_result) {
-        return left_result;
-    }
-
-    Node* right_result = find_target(target, root->right);
-    return right_result;
-}
 
 
 public:
@@ -138,9 +125,8 @@ public:
     {
         // return the sorted vector of all nodes at k dist
         unordered_map<Node*, Node*> parent_track;
-        mark_parents(root, parent_track);
+        Node* goal = mark_parents(root, parent_track,target);
         
-        Node* goal = find_target(target,root);
 
         unordered_map<Node*, bool> visited;
         visited[goal] = true;
